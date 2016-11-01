@@ -16,23 +16,10 @@ public class DbConnection {
 	
 
 	//oracle连接写法
-	private static String diver=null;
-	private static String url=null;
-	private static String username=null;
-	private static String password=null;
-
-	static {
-		try{
-			Properties properties = new Properties();
-			properties.load(new FileReader(new File("config/DataCenter.properties")));
-			diver=properties.getProperty("mysql.driver");
-			url=properties.getProperty("mysql.url");
-			username=properties.getProperty("mysql.username");
-			password=properties.getProperty("mysql.password");
-		}catch (IOException e){
-			System.out.println("读取配置文件失败:"+e.getMessage());
-		}
-	}
+	private static String diver="com.mysql.jdbc.Driver";
+	private static String url="jdbc:mysql://localhost:3306/news?useUnicode=true&characterEncoding=utf-8&useSSL=false";
+	private static String username="root";
+	private static String password="yy201314,./";
 
 
 	static{

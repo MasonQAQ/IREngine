@@ -3,8 +3,8 @@ package com.yangyue.crawler;
 import com.yangyue.dao.bean.NewsBean;
 import com.yangyue.dao.imp.NewsDao;
 import com.yangyue.dao.inf.NewsDaoInf;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
+
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.htmlparser.NodeFilter;
@@ -18,6 +18,7 @@ import org.htmlparser.util.ParserException;
 
 import java.io.IOException;
 
+
 /**
  * <爬虫程序> 从新浪新闻中爬取新闻分类、标题及内容 (htmlparser.jar)
  *
@@ -26,13 +27,16 @@ import java.io.IOException;
 public class NewsCrawller {
 
 	private final static String URL = "http://roll.news.sina.com.cn/s/channel.php?ch=01";//新闻链接
-	private final static String proxyURL = "http://http://localhost:8000/doload";//新闻链接
-	private final static String proxyTime="3000";
+	private final static String proxyURL = "http://localhost:8000/doload";//新闻链接
+	private final static String proxyTime="5000";
 	private final static String ENCODING = "utf-8";
 	private final static String LINK_TO_WORD = "\" target=\"_blank\">";//A标签 “href内容”到“文本”之间的部分
 	private final static String TYPE_WORD=";return false;\">";//类型标识符
 	private static NewsDaoInf dao = new NewsDao();// 引用dao进行对数据库的操作
 
+	public static void main(String[] args) {
+		getNews(proxy());
+	}
 	public static String proxy(){
 		String result="";
 		HttpClient client = new HttpClient();
@@ -55,43 +59,6 @@ public class NewsCrawller {
 		}
 		return result;
 	}
-	/**
-	 * 不使用代理抓取新浪滚动信息
-	 *
-	 */
-	public static void getNews() {
-
-		NodeFilter filter = new TagNameFilter("ul");
-		Parser parser = new Parser();
-		NodeList list = null;
-		try {
-			parser.setURL(URL);// 互联网模块的地址
-			parser.setEncoding(ENCODING);
-			list = parser.extractAllNodesThatMatch(filter);
-			System.out.println(list.size());
-		} catch (ParserException e) {
-			System.out.println("抓取信息出错，出错信息为：");
-			e.printStackTrace();
-		}
-		for (int i = 0; i < list.size(); i++) {
-
-			Tag node = (Tag) list.elementAt(i);
-			for (int j = 1; j < node.getChildren().size(); j++) {
-				String textStr = node.getChildren().elementAt(j).toHtml()
-						.trim();
-				String link = getLink(textStr);// 获取链接
-				String title = getTitle(textStr);// 获取标题
-				String body = getNewsBody(link);// 获取内容
-				if (!"".equals(link)&& !"".equals(title) && !"".equals(body)) {
-					/** 写入数据库 */
-					NewsBean newsBean = new NewsBean(0, title, body, link,
-							link.substring(link.lastIndexOf("/") - 10,
-									link.lastIndexOf("/")), "类型未找到,需要重写方法");
-					dao.add(newsBean);
-				}
-			}
-		}
-	}
 
 	public static void getNews(String html) {
 
@@ -102,7 +69,6 @@ public class NewsCrawller {
 			parser.setInputHTML(html);
 			parser.setEncoding(ENCODING);
 			list = parser.extractAllNodesThatMatch(filter);
-			System.out.println(list.size());
 		} catch (ParserException e) {
 			System.out.println("抓取信息出错，出错信息为：" + e.getMessage());
 			e.printStackTrace();
@@ -111,11 +77,16 @@ public class NewsCrawller {
 
 			Tag node = (Tag) list.elementAt(i);
 			for (int j = 0; j < node.getChildren().size(); j++) {
-				String textStr = node.getChildren().elementAt(j).toHtml().trim();
-				String type=getNewsType(textStr);
+				NodeList temp = node.getChildren().elementAt(j).getChildren();
+				String strType=temp.elementAt(0).toHtml().trim();
+				String textStr = temp.elementAt(1).toHtml().trim()+temp.elementAt(2).toHtml().trim();
+				String type=getNewsType(strType);
 				String link = getLink(textStr);// 获取链接
+				System.out.println("抓取链接："+link);
 				String title = getTitle(textStr);// 获取标题
+				System.out.println("抓取标题："+title);
 				String body = getNewsBody(link);// 获取内容
+				System.out.println("抓取内容："+body);
 				if (!"".equals(link)&& !"".equals(title) && !"".equals(body)) {
 					/** 写入数据库 */
 					NewsBean newsBean = new NewsBean(0, title, body, link,
@@ -164,7 +135,7 @@ public class NewsCrawller {
 			return "";
 		}
 		int titlebegin = textStr.indexOf(LINK_TO_WORD);
-		int titleend = textStr.indexOf("</a>");
+		int titleend = textStr.indexOf("</a>]</span>");
 		String title = textStr.substring(titlebegin + LINK_TO_WORD.length(),
 				titleend).trim();
 		System.out.println("正在抓取: " + title);
