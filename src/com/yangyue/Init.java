@@ -37,10 +37,16 @@ public class Init {
                 break;
             case 3:
                 /**
-                 * 抓取搜狐277页内容
+                 * 抓取新浪277页内容
                  */
-                for (int i=1001;i<1030;i++){
-                    String url="http://news.sohu.com/_scroll_newslist/2016"+i+"/news.inc";
+                Scanner scanner1 = new Scanner(System.in);
+                System.out.println("请输入要采集起始日期:");
+                System.out.println("请输入起点：");
+                int start=scanner1.nextInt();
+                System.out.println("请输入终点: ");
+                int end=scanner1.nextInt();
+                for (int i=start;i<end;i++){
+                    String url="http://news.sohu.com/_scroll_newslist/"+i+"/news.inc";
                     SohuNewsCrawler sohuNewsCrawler = new SohuNewsCrawler(url);
                     sohuNewsCrawler.getNews();
                 }
