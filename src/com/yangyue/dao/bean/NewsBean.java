@@ -14,7 +14,7 @@ public class NewsBean {
 	}
 
 	public NewsBean(int id, String title, String content, String url,
-			String newsdate, String type) {
+                    String newsdate, String type) {
 		super();
 		this.id = id;
 		this.title = title;

@@ -17,9 +17,11 @@ public class NewsDao implements NewsDaoInf {
 	Connection conn = null;
 	PreparedStatement st = null;
 	ResultSet rs = null;
+	String tableName;
 
-	public NewsDao() {
+	public NewsDao(String tableName) {
 		// TODO Auto-generated constructor stub
+		this.tableName=tableName;
 	}
 
 	public NewsDao(Connection conn, PreparedStatement st, ResultSet rs) {
@@ -32,7 +34,7 @@ public class NewsDao implements NewsDaoInf {
 	@Override
 	public void add(NewsBean newsBean) {
 		// TODO Auto-generated method stub
-		String sql = "insert into sinanews(title,content,url,newsdate,type) values(?,?,?,?,?);";
+		String sql = "insert into "+tableName+"(title,content,url,newsdate,type) values(?,?,?,?,?);";
 		try {
 			// 加载驱动，建立连接
 			conn = DbConnection.getConn();
@@ -71,7 +73,7 @@ public class NewsDao implements NewsDaoInf {
 	@Override
 	public boolean hasNews(String title) {
 		boolean has = false;
-		String sql = "select id from sinanews where title = '" + title + "' ";
+		String sql = "select id from "+tableName+" where title = '" + title + "' ";
 		// System.out.println(sql);
 		try {
 			// 加载驱动，建立连接
@@ -98,7 +100,7 @@ public class NewsDao implements NewsDaoInf {
 	public List<NewsBean> query() {
 		// TODO Auto-generated method stub
 		List<NewsBean> list = new ArrayList<NewsBean>();
-		String sql = "select id,title,newsdate,type from sinanews order by newsdate desc";
+		String sql = "select id,title,newsdate,type from "+tableName+" order by newsdate desc";
 		try {
 			// 加载驱动，建立连接
 			conn = DbConnection.getConn();
@@ -129,7 +131,7 @@ public class NewsDao implements NewsDaoInf {
 	public NewsBean queryOne(String id) {
 		// TODO Auto-generated method stub
 		NewsBean bean = new NewsBean();
-		String sql = "select * from sinanews where id=" + id;
+		String sql = "select * from "+tableName+" where id=" + id;
 		try {
 			// 加载驱动，建立连接
 			conn = DbConnection.getConn();

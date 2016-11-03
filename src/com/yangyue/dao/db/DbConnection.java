@@ -9,7 +9,7 @@ import java.util.Properties;
 /**
  * 数据库连接类
  * 
- * @author 刘向峰
+ * @author yangyue
  * 
  */
 public class DbConnection {
@@ -77,7 +77,4 @@ public class DbConnection {
 		}
 	}
 
-	public static void main(String[] args) {
-		System.out.println(new DbConnection().getConn());
-	}
 }
