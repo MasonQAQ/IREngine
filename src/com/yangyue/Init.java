@@ -40,10 +40,10 @@ public class Init {
                  * 抓取新浪277页内容
                  */
                 Scanner scanner1 = new Scanner(System.in);
-                System.out.println("请输入要采集起始日期:");
-                System.out.println("请输入起点：");
+                System.out.println("请输入要采集起始日期:（请填写每月起始日期和终止日期）");
+                System.out.println("请输入起点：(如：20160101)");
                 int start=scanner1.nextInt();
-                System.out.println("请输入终点: ");
+                System.out.println("请输入终点: (如：20160131)");
                 int end=scanner1.nextInt();
                 for (int i=start;i<end;i++){
                     String url="http://news.sohu.com/_scroll_newslist/"+i+"/news.inc";
